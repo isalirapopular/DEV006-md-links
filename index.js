@@ -1,4 +1,4 @@
-const { isAbsolute, relativeToAbsolute, isValidPath, isFile, findFileInDirectory, getFilesInDirectory,findMarkdownFilesInDirectory } = require('./mdLinks.js');
+const { isAbsolute, relativeToAbsolute, isValidPath, isFile, findFileInDirectory, getFilesInDirectory } = require('./mdLinks.js');
 
 const filePath = process.argv[2];
 

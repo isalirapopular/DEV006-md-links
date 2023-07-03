@@ -99,18 +99,7 @@ function getFilesInDirectory(directoryPath) {
             }
         });
     });
-    function findMarkdownFilesInDirectory(directoryPath) {
-        return new Promise((resolve, reject) => {
-          getFilesInDirectory(directoryPath)
-            .then((filePaths) => {
-              const markdownFiles = filePaths.filter(isMarkdownFile);
-              resolve(markdownFiles);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
-      }
+    
 }
 
 module.exports = {
@@ -120,5 +109,4 @@ module.exports = {
     isFile,
     findFileInDirectory,
     getFilesInDirectory
-    findMarkdownFilesInDirectory
 }
