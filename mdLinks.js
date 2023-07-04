@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require('fs');
+const axios = require('axios');
 
 function isAbsolute(route) {
     return path.isAbsolute(route)
@@ -35,78 +36,49 @@ function isFile(route) {
     });
 }
 
-function findFileInDirectory(directoryPath, fileName) {
-    return new Promise((resolve, reject) => {
-        fs.stat(directoryPath, (err, stats) => {
-            if (err) {
-                reject(err); // Rechaza la promesa si hay un error al obtener información del directorio
-            } else {
-                if (stats.isDirectory()) {
-                    fs.readdir(directoryPath, (err, files) => {
-                        if (err) {
-                            reject(err); // Rechaza la promesa si hay un error al leer el directorio
-                        } else {
-                            let foundFile = false;
-
-                            // Recorre los archivos y directorios en el directorio
-                            for (let file of files) {
-                                const filePath = path.join(directoryPath, file);
-
-                                // Si el archivo actual es el que estamos buscando, resuelve la promesa con su ruta completa
-                                if (file === fileName) {
-                                    resolve(filePath);
-                                    foundFile = true;
-                                    break;
-                                }
-
-                                // Si es un directorio, realiza una búsqueda recursiva en ese directorio
-                                if (fs.statSync(filePath).isDirectory()) {
-                                    return findFileInDirectory(filePath, fileName)
-                                        .then((foundFilePath) => {
-                                            if (foundFilePath) {
-                                                resolve(foundFilePath);
-                                                foundFile = true;
-                                            }
-                                        })
-                                        .catch((err) => {
-                                            reject(err);
-                                        });
-                                }
-                            }
-
-                            // Si no se encontró el archivo en este directorio ni en ninguno de sus subdirectorios
-                            if (!foundFile) {
-                                resolve(null);
-                            }
-                        }
-                    });
-                } else {
-                    resolve(null); // La ruta no es un directorio
-                }
-            }
-        });
-    });
-}
-
 function getFilesInDirectory(directoryPath) {
     return new Promise((resolve, reject) => {
         fs.readdir(directoryPath, (err, files) => {
             if (err) {
                 reject(err); // Rechaza la promesa si hay un error al leer el directorio
             } else {
-                const filePaths = files.map((file) => path.join(directoryPath, file));
-                resolve(filePaths);
+                const filePaths = files
+                    .map((file) => path.join(directoryPath, file))
+                    .filter((filePath) => path.extname(filePath) === ".md"); // Filtra solo los archivos con extensión ".md"
+
+                if (filePaths.length === 0) {
+                    reject("El directorio no contiene archivos MD");
+                } else {
+                    resolve(filePaths);
+                }
             }
         });
     });
-    
 }
+
+function readMDFile(route) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(route, 'utf8', (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
+
+
+
+
 
 module.exports = {
     isAbsolute,
     relativeToAbsolute,
     isValidPath,
     isFile,
-    findFileInDirectory,
-    getFilesInDirectory
+    getFilesInDirectory,
+    readMDFile,
+   
 }
