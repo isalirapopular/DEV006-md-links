@@ -67,7 +67,19 @@ function readMDFile(route) {
         });
     });
 }
-
+function extractLinksFromMarkdown(content) {
+    const regex = /\[(.*?)\]\((.*?)\)/g;
+    const links = [];
+    let match;
+  
+    while ((match = regex.exec(content)) !== null) {
+      const text = match[1];
+      const url = match[2];
+      links.push({ text, url });
+    }
+  
+    return links;
+  }
 
 
 
@@ -80,5 +92,6 @@ module.exports = {
     isFile,
     getFilesInDirectory,
     readMDFile,
+    extractLinksFromMarkdown
    
 }
