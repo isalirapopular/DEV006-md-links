@@ -2,9 +2,11 @@ const { isAbsolute,
   relativeToAbsolute, 
   isValidPath, 
   isFile, 
-  getFilesInDirectory, 
+  readMDFile,
+  extractLinksFromMarkdown
    } = require('./mdLinks.js');
 
+const axios = require('axios');
 const filePath = process.argv[2];
 
 function mdLinks(path, options) {
@@ -26,30 +28,64 @@ function mdLinks(path, options) {
         console.error('La ruta no es válida');
       });
 
-    isFile(absolutePath)
-      .then((isFile) => {
-        if (isFile) {
-          console.log("es archivo");
-        } else {
-          console.log("es directorio");
-          getFilesInDirectory(absolutePath)
-            .then((filePaths) => {
-              console.log("Estos son los archivos MD disponibles:");
-              console.log(filePaths);
+  isFile(absolutePath)
+  .then((isFile) => {
+    if (isFile) {
+      if (!absolutePath.endsWith('.md') && !absolutePath.endsWith('.MD')) {
+        console.log('El archivo no tiene la extensión .md');
+        return;
+      }
+      console.log("Es un archivo .md");
+      
+      readMDFile(absolutePath)
+        .then((fileContent) => {
+          const links = extractLinksFromMarkdown(fileContent);
+          const promises = links.map((link) => {
+            if (options.validate) {
+              return axios.head(link.href)
+                .then((response) => ({
+                  ...link,
+                  status: response.status,
+                  ok: response.status >= 200 && response.status < 400 ? 'ok' : 'fail'
+                }))
+                .catch((error) => ({
+                  ...link,
+                  status: null,
+                  ok: 'fail'
+                }));
+            } else {
+              return Promise.resolve({
+                ...link,
+                status: null,
+                ok: 'ok'
+              });
+            }
+          });
+
+          Promise.all(promises)
+            .then((results) => {
+              console.log("Acá puedes obtener el resultado de los enlaces:");
+              console.log(results);
             })
             .catch((error) => {
-              console.error("Error al obtener la lista de archivos:", error);
-            });   
-        }
-      })
-      .catch((error) => {
-        console.error('Error: No es archivo');
-      });
+              console.error("Error al validar los enlaces:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error al leer el archivo:", error);
+        });
+    } else {
+      console.log("es directorio");
+    }
+  })
+  .catch((error) => {
+    console.error('Error: No es archivo');
+  });
   });
 }
 
-mdLinks(filePath)
+
+mdLinks(filePath, { validate: true })
   .then((res) => console.log(res))
   .catch((err) => console.log(err));
-
   
