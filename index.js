@@ -3,7 +3,7 @@ const { isAbsolute,
   isValidPath, 
   isFile, 
   getFilesInDirectory, 
-   } = require('.mdLinks');
+   } = require('./mdLinks.js');
 
 const filePath = process.argv[2];
 
