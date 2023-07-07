@@ -67,15 +67,15 @@ function readMDFile(route) {
         });
     });
 }
-function extractLinksFromMarkdown(content) {
-    const regex = /\[(.*?)\]\((.*?)\)/g;
+function extractLinksFromMarkdown(content,file) {
+    const regex = /\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;
     const links = [];
     let match;
   
     while ((match = regex.exec(content)) !== null) {
       const text = match[1];
       const url = match[2];
-      links.push({ text, url });
+      links.push({ text, url, file });
     }
   
     return links;
