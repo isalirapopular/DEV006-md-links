@@ -49,7 +49,7 @@ function mdLinks(path, options) {
         const promises = filePaths.map((file) => {
           return readMDFile(file)
             .then((fileContent) => {
-              const links = extractLinksFromMarkdown(fileContent);
+              const links = extractLinksFromMarkdown(fileContent,file);
               if (options.validate) {
                 const linkPromises = links.map((link) => {
                   return axios
