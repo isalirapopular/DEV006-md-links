@@ -68,7 +68,7 @@ function readMDFile(route) {
     });
 }
 function extractLinksFromMarkdown(content) {
-    const regex = /\[(.*?)\]\((.*?)\)/g;
+    const regex = /\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;
     const links = [];
     let match;
   
