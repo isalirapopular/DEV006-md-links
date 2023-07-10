@@ -47,9 +47,10 @@ function getFilesInDirectory(directoryPath) {
                     .filter((filePath) => path.extname(filePath) === ".md"); // Filtra solo los archivos con extensión ".md"
 
                 if (filePaths.length === 0) {
-                    reject("El directorio no contiene archivos MD");
+                    reject("El directorio no contiene archivos .md");
                 } else {
                     resolve(filePaths);
+                    console.log('Este directorio contiene archivo .md')
                 }
             }
         });
