@@ -94,3 +94,7 @@ function mdLinks(path, options) {
 mdLinks(filePath, { validate: true })
   .then((res) => console.log(res))
   .catch((err) => console.log(err));
+
+  module.exports = {
+    mdLinks
+  };
