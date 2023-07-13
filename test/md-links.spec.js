@@ -26,7 +26,7 @@ describe('mdLinks', () => {
 });
 
 describe('getFilesInDirectory index.js', () => {
-  it('Debe resolver con la lista de archivos Markdown dentro del directorio', () => {
+  it('Debe obtener de un directorio el archivo MD ', () => {
     const directoryPath = '/Users/isa/Library/CloudStorage/OneDrive-Personal/ISA/001.CURSOS/Laboratoria/04.Junio/DEV006-md-links/Muestras';
 
     // Mock de fs.readdir para devolver archivos específicos
